@@ -25,26 +25,42 @@ if (friends.length < 1) {
 	console.log('Invalid "friends" file');
 	process.exit(1);
 }
-var subscriptionCount = 0;
+var subscriptionCount;
 var iconPath = fs.realpathSync('icon.png');
+resetVars();
+connect();
 
-var socket = net.connect(program.port, program.ip);
-socket.setKeepAlive(true, 2*60*1000);
-socket.on('data', function(data) {
-	if (data.toString().trim() == "ok" && subscriptionCount < friends.length) {
-		var req = {'request': 'subscribe', 'uid': friends[subscriptionCount]};
-		var req = JSON.stringify(req);
-		socket.write(req + '\n');
-		subscriptionCount++;
-	} else {
-		if (data.toString().trim() == 'ok') return;
-		var notification = JSON.parse(data.toString());
-		var action = (notification.status == 1) ? 'connected' : 'disconnected';
-		notify.icon(iconPath).notify('ts-notify', notification.name + ' ' + action);
-	}
-});
-socket.on('close', function() { //Attempt reconnect after 30 seconds
+function connect() {
+	var socket = net.connect(program.port, program.ip);
+	socket.setKeepAlive(true, 2*60*1000);
+	socket.on('data', function(data) {
+		if (data.toString().trim() == "ok" && subscriptionCount < friends.length) {
+			var req = {'request': 'subscribe', 'uid': friends[subscriptionCount]};
+			var req = JSON.stringify(req);
+			socket.write(req + '\n');
+			subscriptionCount++;
+		} else {
+			if (data.toString().trim() == 'ok') return;
+			var notification = JSON.parse(data.toString());
+			var action = (notification.status == 1) ? 'connected' : 'disconnected';
+			notify.icon(iconPath).notify('ts-notify', notification.name + ' ' + action);
+		}
+	});
+	socket.on('connect', function() {
+		console.log('Connected.');
+	});
+	socket.on('close', reconnect);
+	socket.on('error', reconnect);
+}
+
+function resetVars() {
+	subscriptionCount = 0;
+}
+
+function reconnect() {
+	console.log('Disconnected. Attempting to reconnect in 30 seconds');
 	setTimeout(function() {
-		socket = net.connect(program.port, program.ip);
+		resetVars();
+		connect();
 	}, 30000);
-});
+}
