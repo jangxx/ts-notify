@@ -8,6 +8,6 @@ Needs a file containing the uniqueIds (without the trailing '=') of the TeamSpea
 
 Example 'friends' file:
 
-&lt;uniqueId1&gt;
-&lt;uniqueId2&gt;
+&lt;uniqueId1&gt;<br>
+&lt;uniqueId2&gt;<br>
 &lt;uniqueId3&gt;
