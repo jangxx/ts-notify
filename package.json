@@ -1,0 +1,17 @@
+{
+  "name": "ts-notify",
+  "version": "0.0.1",
+  "description": "Client for ts-notify-server",
+  "main": "ts-notify.js",
+  "dependencies": {
+    "commander": "~2.0.0",
+    "notify-send": "~0.1.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+    "predeploy": "wget -O icon.png http://www.teamspeak.com/media_repository/files/mediakit_2013/03_button/ts_Button_66x66_02.png"
+  },
+  "author": "jangxx",
+  "license": "MIT"
+}
