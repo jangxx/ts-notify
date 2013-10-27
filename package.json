@@ -9,8 +9,12 @@
   },
   "devDependencies": {},
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-    "predeploy": "wget -O icon.png http://www.teamspeak.com/media_repository/files/mediakit_2013/03_button/ts_Button_66x66_02.png"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepublish": "wget -O icon.png http://www.teamspeak.com/media_repository/files/mediakit_2013/03_button/ts_Button_66x66_02.png"
+  },
+  "repository": {
+  	"type": "git",
+  	"url": "https://github.com/jangxx/ts-notify.git"
   },
   "author": "jangxx",
   "license": "MIT"

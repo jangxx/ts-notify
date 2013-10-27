@@ -1,6 +1,7 @@
 var notify = require('notify-send');
 var net = require('net');
 var fs = require('fs');
+var http = require('http');
 var program = require('commander');
 
 program
@@ -25,8 +26,8 @@ var subscriptionCount = 0;
 var iconPath = fs.realpathSync('icon.png');
 
 var socket = net.connect(program.port, program.ip);
+socket.setKeepAlive(true, 2*60*1000);
 socket.on('data', function(data) {
-	console.log(data.toString());
 	if (data.toString().trim() == "ok" && subscriptionCount < friends.length) {
 		var req = {'request': 'subscribe', 'uid': friends[subscriptionCount]};
 		var req = JSON.stringify(req);
@@ -38,4 +39,9 @@ socket.on('data', function(data) {
 		var action = (notification.status == 1) ? 'connected' : 'disconnected';
 		notify.icon(iconPath).notify('ts-notify', notification.name + ' ' + action);
 	}
+});
+socket.on('close', function() { //Attempt reconnect after 30 seconds
+	setTimeout(function() {
+		socket = net.connect(program.port, program.ip);
+	}, 30000);
 });
