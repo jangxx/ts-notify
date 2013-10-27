@@ -6,14 +6,17 @@ var program = require('commander');
 
 program
 	.version("0.0.1")
-	.option("-p, --port <port>", "Server port", 60000)
-	.option("-i, --ip <ip>", "Remote Ip address", "localhost")
+	.option("-p, --port <port>", "Server port [60000]", 60000)
+	.option("-i, --ip <ip>", "Remote ip address")
 	.option("--file <file>", "Alternative 'friends' file")
 	.parse(process.argv);
 
 if (!fs.existsSync(program.file || 'friends')) {
 	console.log('File "friends" missing');
 	process.exit(1);
+}
+if (!program.ip) {
+	program.help();
 }
 var friends = [];
 var friendsFile = fs.readFileSync(program.file || 'friends', {encoding: 'UTF-8'});
