@@ -2,7 +2,7 @@
 
 Connects to a ts-notify-server and updates you about your friends connecting and disconnectin from a TeamSpeak3 server (using notify-send).
 
-<strong>Usage: node ts-notify -i <ip/host> [-p &lt;port&gt;] [--file &lt;file&gt;]</strong>
+<strong>Usage: node ts-notify -i &lt;ip/host&gt; [-p &lt;port&gt;] [--file &lt;file&gt;]</strong>
 
 Needs a file containing the uniqueIds (without the trailing '=') of the TeamSpeak-Clients you want to follow.
 
