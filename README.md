@@ -9,6 +9,6 @@ Needs a file containing the uniqueIds of the TeamSpeak-Clients you want to follo
 
 Example 'friends' file:
 
-&lt;uniqueId1&gt;<br>
-&lt;uniqueId2&gt;<br>
-&lt;uniqueId3&gt;
+	&lt;uniqueId1&gt;<br>
+	&lt;uniqueId2&gt;<br>
+	&lt;uniqueId3&gt;
