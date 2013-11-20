@@ -5,7 +5,8 @@
   "main": "ts-notify.js",
   "dependencies": {
     "commander": "~2.0.0",
-    "notify-send": "~0.1.2"
+    "growl": "~1.7.0",
+    "eventsource": "~0.0.9"
   },
   "devDependencies": {},
   "scripts": {
