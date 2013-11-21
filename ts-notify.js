@@ -6,7 +6,7 @@ var EventSource = require('eventsource');
 var growl = require("growl");
 
 program
-	.version("0.0.2")
+	.version("0.0.3")
 	.option("-p, --port [port]", "Server port [60000]", 60000)
 	.option("-a, --address <address>", "Remote ip address/hostname")
 	.option("--file [file]", "Alternative 'friends' file")
@@ -29,7 +29,7 @@ var friends = [];
 var address = 'http://' + program.address + ':' + program.port;
 var iconPath = fs.realpathSync('icon.png');
 var friendsFile = fs.readFileSync(program.file || 'friends', {encoding: 'UTF-8'});
-friends = friendsFile.split('\n');
+friends = friendsFile.split(require('os').EOL);
 friends.pop();
 if (friends.length < 1) {
 	output('Invalid "friends" file');
@@ -44,7 +44,6 @@ function setupEventSource() {
 		output('Connected to ' + address);
 	}
 	eventSource.onmessage = function(e) {
-		console.log(e.data);
 		if (e.data == '"success"') return;
 		var event = JSON.parse(e.data);
 		var action = event.status == 1 ? 'connected' : 'disconnected';

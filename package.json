@@ -1,6 +1,6 @@
 {
   "name": "ts-notify",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "description": "Client for ts-notify-server",
   "main": "ts-notify.js",
   "dependencies": {
