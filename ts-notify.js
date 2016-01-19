@@ -1,18 +1,15 @@
-var net = require('net');
 var fs = require('fs');
-var http = require('http');
 var program = require('commander');
-var EventSource = require('eventsource');
+var socketio = require('socket.io-client');
 var growl = require("growl");
+var util = require('util');
 
 program
-	.version("0.0.3")
-	.option("-p, --port [port]", "Server port [60000]", 60000)
+	.version("0.1.0")
+	.option("-p, --port [port]", "Server port [60000]", 6000)
 	.option("-a, --address <address>", "Remote ip address/hostname")
-	.option("--file [file]", "Alternative 'friends' file")
+	.option("--file [file]", ".json file containing an array of uniqueIDs", "friends.json")
 	.option('--disable-output', "Disable all output (except error messages)")
-	.option('--reconnect-delay [delay]', 'Reconnection delay (in seconds)', 20)
-	.option('--reconnect-max-attempts [max-attempts]', 'Number of reconnection retries', 5)
 	.parse(process.argv);
 
 if (!fs.existsSync(program.file || 'friends')) {
@@ -22,95 +19,45 @@ if (!fs.existsSync(program.file || 'friends')) {
 if (!program.address) {
 	program.help();
 }
-var subID;
-var eventSource;
-var attemptCounter = 0;
-var friends = [];
 var address = 'http://' + program.address + ':' + program.port;
 var iconPath = fs.realpathSync('icon.png');
-var friendsFile = fs.readFileSync(program.file || 'friends', {encoding: 'UTF-8'});
-friends = friendsFile.split(require('os').EOL);
-friends.pop();
-if (friends.length < 1) {
-	output('Invalid "friends" file');
-	process.exit(1);
+
+if(!fs.existsSync(program.file)) {
+	fs.writeFileSync(program.file, "[]");
 }
 
-init(setupEventSource);
+var friendsFile = fs.readFileSync(program.file, {encoding: 'UTF-8'});
+try {
+	var friends = JSON.parse(friendsFile);
+} catch(e) {
+	log('Invalid "friends" file');
+	var friends = [];
+}
 
-function setupEventSource() {
-	eventSource = new EventSource('http://' + program.address + ':' + program.port + '/event?id=' + subID);
-	eventSource.onopen = function() {
-		output('Connected to ' + address);
+var socket = socketio(address);
+
+socket.on('connect', function() {
+	log("Connected to " + address);
+	
+	for(var f in friends) {
+		socket.emit('subscribe', friends[f]);
 	}
-	eventSource.onmessage = function(e) {
-		if (e.data == '"success"') return;
-		var event = JSON.parse(e.data);
-		var action = event.status == 1 ? 'connected' : 'disconnected';
-		growl(event.name + " " + action, {title: 'ts-notify', image: iconPath});
-	};
-	eventSource.onerror = function() {
-		if (attemptCounter >= program.reconnectMaxAttempts) {
-			output('Too many failed connection attempts. Exiting..');
-			process.exit(1);
-		}
-		output('Lost connection. Attempting to reconnect in ' + program.reconnectDelay + ' seconds');
-		eventSource.close();
-		setTimeout(function() {
-			attemptCounter++;
-	   		init(setupEventSource);
-		}, program.reconnectDelay * 1000);
-	};
+});
+
+socket.on('connected', function(name) {
+	log(name + " connected");
+	growl(htmlEntities(name) + " connected", {title: 'ts-notify', image: iconPath});
+});
+
+socket.on('disconnected', function(name) {
+	log(name + " disonnected");
+	growl(htmlEntities(name) + " disonnected", {title: 'ts-notify', image: iconPath});
+});
+
+function htmlEntities(str) {
+    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(new RegExp('"', 'g'), '&quot;');
 }
 
-function init(cb) {
-	doReq('GET', '/init', function(res, data) {
-		subID = JSON.parse(data).id;
-		var subCount = 0;
-		for(i in friends) {
-			doReq('POST', '/subscribe?id=' +subID + "&userid=" + encodeURIComponent(friends[i]), function(res, data) {
-				subCount++;
-				if (subCount == friends.length) {
-					cb();
-				}
-			});
-		}
-	});
-}
-
-function doReq(method, path, cb) {
-	if (typeof data == "function") cb = data;
-	var options = {
-		'host': program.address,
-		'port': program.port,
-		'method': method,
-		'path': path
-	};
-	var req = http.request(options, function(res) {
-		var data = "";
-		res.on('data', function(chunk) {
-			data += chunk;
-		});
-		res.on('end', function() {
-			cb(res, data);
-		});
-	});
-	req.on('error', function() {
-		if (attemptCounter >= program.reconnectMaxAttempts) {
-			output('Too many failed connection attempts. Exiting..');
-			process.exit(1);
-		}
-		output("Can't connect to server. Attempting to reconnect in " + program.reconnectDelay + " seconds.");
-		setTimeout(function() {
-			attemptCounter++;
-	   		init(setupEventSource);
-		}, program.reconnectDelay * 1000);
-	});
-	req.end();
-}
-
-function output(text, obj) {
-	if (program.disableOutput) return;
-	var _d = new Date();
-	console.log("[" + ('0' + _d.getDate()).slice(-2) + "." + ('0' + (_d.getMonth()+1)).slice(-2) + "." + _d.getFullYear() + " " + ('0' + _d.getHours()).slice(-2) + ":" + ('0' + _d.getMinutes()).slice(-2) + ":" + ('0' + _d.getSeconds()).slice(-2) + "] " + text, (obj) ? obj : "");
+function log(text) {
+	if(!program.disableOutput) util.log(text);
 }

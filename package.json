@@ -3,20 +3,20 @@
   "version": "0.0.3",
   "description": "Client for ts-notify-server",
   "main": "ts-notify.js",
-  "dependencies": {
-    "commander": "~2.0.0",
-    "growl": "~1.7.0",
-    "eventsource": "~0.0.9"
-  },
   "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "prepublish": "wget -O icon.png http://www.teamspeak.com/media_repository/files/mediakit_2013/03_button/ts_Button_66x66_02.png"
+    "prepublish": "wget -O icon.png http://icons.iconarchive.com/icons/dakirby309/simply-styled/256/TeamSpeak-icon.png"
   },
   "repository": {
-  	"type": "git",
-  	"url": "https://github.com/jangxx/ts-notify.git"
+    "type": "git",
+    "url": "https://github.com/jangxx/ts-notify.git"
   },
   "author": "jangxx",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "commander": "^2.9.0",
+    "growl": "^1.8.1",
+    "socket.io-client": "^1.4.4"
+  }
 }
