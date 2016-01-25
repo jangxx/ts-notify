@@ -5,7 +5,7 @@ var growl = require("growl");
 var util = require('util');
 
 program
-	.version("0.1.0")
+	.version("0.1.1")
 	.option("-p, --port [port]", "Server port [60000]", 6000)
 	.option("-a, --address <address>", "Remote ip address/hostname")
 	.option("--file [file]", ".json file containing an array of uniqueIDs", "friends.json")
@@ -50,8 +50,8 @@ socket.on('connected', function(name) {
 });
 
 socket.on('disconnected', function(name) {
-	log(name + " disonnected");
-	growl(htmlEntities(name) + " disonnected", {title: 'ts-notify', image: iconPath});
+	log(name + " disconnected");
+	growl(htmlEntities(name) + " disconnected", {title: 'ts-notify', image: iconPath});
 });
 
 function htmlEntities(str) {
