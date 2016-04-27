@@ -10,7 +10,7 @@ Needs a file containing the uniqueIds of the TeamSpeak-Clients you want to follo
 Example 'friends.json' file:
 
 	[
-		"<uniqueId1>"
-		"<uniqueId2>"
+		"<uniqueId1>",
+		"<uniqueId2>",
 		"<uniqueId3>"
 	]
