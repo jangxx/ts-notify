@@ -5,8 +5,8 @@ var growl = require("growl");
 var util = require('util');
 
 program
-	.version("0.1.1")
-	.option("-p, --port [port]", "Server port [60000]", 6000)
+	.version("0.1.2")
+	.option("-p, --port [port]", "Server port [6000]", 6000)
 	.option("-a, --address <address>", "Remote ip address/hostname")
 	.option("--file [file]", ".json file containing an array of uniqueIDs", "friends.json")
 	.option('--disable-output', "Disable all output (except error messages)")
@@ -38,7 +38,7 @@ var socket = socketio(address);
 
 socket.on('connect', function() {
 	log("Connected to " + address);
-	
+
 	for(var f in friends) {
 		socket.emit('subscribe', friends[f]);
 	}

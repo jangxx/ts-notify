@@ -5,10 +5,12 @@ On Linux this means you need to have notify-send installed. For Mac and Windows 
 
 <strong>Usage: node ts-notify -i &lt;ip/host&gt; [-p &lt;port&gt;] [--file &lt;file&gt;]</strong>
 
-Needs a file containing the uniqueIds of the TeamSpeak-Clients you want to follow.
+Needs a file containing the uniqueIds of the TeamSpeak-Clients you want to follow in JSON format.
 
-Example 'friends' file:
+Example 'friends.json' file:
 
-	<uniqueId1>
-	<uniqueId2>
-	<uniqueId3>
+	[
+		"<uniqueId1>"
+		"<uniqueId2>"
+		"<uniqueId3>"
+	]
